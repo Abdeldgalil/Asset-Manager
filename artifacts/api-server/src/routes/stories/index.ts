@@ -1,12 +1,10 @@
 import { Router } from "express";
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 import { GenerateStoryBody } from "@workspace/api-zod";
 
 const router = Router();
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const genai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 router.post("/stories/generate", async (req, res) => {
   const parsed = GenerateStoryBody.safeParse(req.body);
@@ -47,15 +45,12 @@ Age-appropriate, warm, imaginative. Include a gentle moral lesson.
 Format: emoji title on first line, then 3-4 short paragraphs. Under 220 words total.`;
 
   try {
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1024,
-      messages: [{ role: "user", content: prompt }],
+    const response = await genai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: prompt,
     });
 
-    const block = message.content[0];
-    const story = block.type === "text" ? block.text : "";
-
+    const story = response.text ?? "";
     res.json({ story });
   } catch (err) {
     req.log.error({ err }, "Failed to generate story");
