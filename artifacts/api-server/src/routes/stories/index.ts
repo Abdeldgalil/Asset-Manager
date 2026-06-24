@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 import { GenerateStoryBody } from "@workspace/api-zod";
 
 const router = Router();
 
-const genai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 router.post("/stories/generate", async (req, res) => {
   const parsed = GenerateStoryBody.safeParse(req.body);
@@ -45,12 +45,13 @@ Age-appropriate, warm, imaginative. Include a gentle moral lesson.
 Format: emoji title on first line, then 3-4 short paragraphs. Under 220 words total.`;
 
   try {
-    const response = await genai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: prompt,
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 1024,
     });
 
-    const story = response.text ?? "";
+    const story = completion.choices[0]?.message?.content ?? "";
     res.json({ story });
   } catch (err) {
     req.log.error({ err }, "Failed to generate story");
