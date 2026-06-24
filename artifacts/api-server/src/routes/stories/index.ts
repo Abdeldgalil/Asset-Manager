@@ -46,7 +46,7 @@ Format: emoji title on first line, then 3-4 short paragraphs. Under 220 words to
 
   try {
     const response = await genai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
     });
 
