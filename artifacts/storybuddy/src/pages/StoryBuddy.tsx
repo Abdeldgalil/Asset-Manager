@@ -1,6 +1,26 @@
 import { useState, useRef, useEffect } from "react";
 import { useGenerateStory } from "@workspace/api-client-react";
 
+const PUB_ID = "ca-pub-3178300656334660";
+const SLOTS = { banner: "1850730729", interstitial: "1467587348", rewarded: "1798759833" };
+
+function BannerAd({ slot = SLOTS.banner }: { slot?: string }) {
+  const ref = useRef<HTMLModElement>(null);
+  useEffect(() => {
+    try { ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({}); } catch {}
+  }, []);
+  return (
+    <div style={{minHeight:60,background:"rgba(255,255,255,0.03)",borderRadius:12,overflow:"hidden",margin:"8px 0",textAlign:"center"}}>
+      <ins ref={ref} className="adsbygoogle"
+        style={{display:"block"}}
+        data-ad-client={PUB_ID}
+        data-ad-slot={slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"/>
+    </div>
+  );
+}
+
 const LANGUAGES: Record<string, any> = {
   en: { name: "English", flag: "🇬🇧", dir: "ltr", ui: {
     appName: "StoryBuddy", tagline: "AI Magic Stories for Every Child",
@@ -72,7 +92,10 @@ function AdModal({ t, onFinished }: { t: any; onFinished: () => void }) {
   const [sec, setSec] = useState(5);
   const [skip, setSkip] = useState(false);
   const [done, setDone] = useState(false);
-  const ad = useRef(ADS[Math.floor(Math.random() * ADS.length)]).current;
+
+  useEffect(() => {
+    try { ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({}); } catch {}
+  }, []);
 
   useEffect(() => {
     const iv = setInterval(() => setSec(s => { if(s<=1){clearInterval(iv);setSkip(true);return 0;} return s-1; }), 1000);
@@ -89,22 +112,24 @@ function AdModal({ t, onFinished }: { t: any; onFinished: () => void }) {
   );
 
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div style={{background:"#fff",borderRadius:20,maxWidth:340,width:"100%",overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.5)"}}>
-        <div style={{background:ad.color,padding:"8px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{color:"#fff",fontSize:11,fontWeight:700,letterSpacing:1}}>{t.adLabel}</span>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",backdropFilter:"blur(8px)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{background:"#fff",borderRadius:20,maxWidth:360,width:"100%",overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.6)"}}>
+        <div style={{background:"#302b63",padding:"8px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <span style={{color:"rgba(255,255,255,0.7)",fontSize:11,fontWeight:700,letterSpacing:1}}>{t.adLabel}</span>
           {skip
-            ? <button onClick={()=>{setDone(true);setTimeout(onFinished,600);}} style={{background:"rgba(255,255,255,0.25)",border:"none",color:"#fff",borderRadius:8,padding:"4px 10px",cursor:"pointer",fontSize:12,fontWeight:700}}>{t.adSkipNow}</button>
-            : <span style={{color:"#fff",fontSize:12,fontWeight:600}}>{t.adSkip} {sec}s</span>}
+            ? <button onClick={()=>{setDone(true);setTimeout(onFinished,600);}} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:8,padding:"4px 10px",cursor:"pointer",fontSize:12,fontWeight:700}}>{t.adSkipNow}</button>
+            : <span style={{color:"rgba(255,255,255,0.8)",fontSize:12,fontWeight:600}}>{t.adSkip} {sec}s</span>}
         </div>
-        <div style={{background:ad.bg,padding:32,textAlign:"center"}}>
-          <div style={{fontSize:52,marginBottom:10}}>{ad.emoji}</div>
-          <div style={{fontWeight:800,fontSize:20,color:"#1f2937",marginBottom:6}}>{ad.brand}</div>
-          <div style={{color:"#6b7280",fontSize:14,marginBottom:20}}>{ad.text}</div>
-          <button style={{background:ad.color,color:"#fff",border:"none",borderRadius:12,padding:"10px 28px",fontWeight:700,fontSize:14,cursor:"pointer"}}>{ad.cta}</button>
+        <div style={{padding:"16px",minHeight:200,display:"flex",alignItems:"center",justifyContent:"center",background:"#f9f9f9"}}>
+          <ins className="adsbygoogle"
+            style={{display:"block",width:"100%",minHeight:200}}
+            data-ad-client={PUB_ID}
+            data-ad-slot={SLOTS.interstitial}
+            data-ad-format="auto"
+            data-full-width-responsive="true"/>
         </div>
         <div style={{height:4,background:"#e5e7eb"}}>
-          <div style={{height:"100%",background:ad.color,width:skip?"100%":`${((5-sec)/5)*100}%`,transition:"width 1s linear"}}/>
+          <div style={{height:"100%",background:"linear-gradient(90deg,#c44dff,#4d79ff)",width:skip?"100%":`${((5-sec)/5)*100}%`,transition:"width 1s linear"}}/>
         </div>
       </div>
     </div>
@@ -241,13 +266,7 @@ export default function StoryBuddy() {
             {totalCount>0&&<div style={{marginTop:6,fontSize:11,color:"rgba(255,255,255,0.3)"}}>📚 {totalCount} {t.stats}</div>}
           </div>
 
-          <div style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12,padding:"9px 14px",marginBottom:14,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div>
-              <div style={{fontSize:9,color:"rgba(255,255,255,0.25)",letterSpacing:1,marginBottom:2}}>{t.adLabel}</div>
-              <div style={{fontSize:12,color:"rgba(255,255,255,0.6)"}}>🎓 <strong>KidLearn</strong> — Make learning fun!</div>
-            </div>
-            <button style={{background:"#7c3aed",border:"none",color:"#fff",borderRadius:8,padding:"4px 10px",fontSize:10,cursor:"pointer",fontWeight:700}}>Try Free</button>
-          </div>
+          <BannerAd slot={SLOTS.banner} />
 
           <div className="glass-card">
             <div style={{marginBottom:12}}>
