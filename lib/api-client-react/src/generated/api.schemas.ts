@@ -9,6 +9,14 @@ export interface HealthStatus {
   status: string;
 }
 
+export type StoryInputLength = typeof StoryInputLength[keyof typeof StoryInputLength];
+
+
+export const StoryInputLength = {
+  short: 'short',
+  long: 'long',
+} as const;
+
 export interface StoryInput {
   childName: string;
   age: string;
@@ -16,6 +24,7 @@ export interface StoryInput {
   mood: string;
   language: string;
   characters?: string;
+  length?: StoryInputLength;
 }
 
 export interface StoryResult {

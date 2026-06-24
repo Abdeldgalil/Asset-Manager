@@ -13,7 +13,8 @@ router.post("/stories/generate", async (req, res) => {
     return;
   }
 
-  const { childName, age, storyType, mood, language, characters } = parsed.data;
+  const { childName, age, storyType, mood, language, characters, length } = parsed.data;
+  const isLong = length === "long";
 
   const typeMap: Record<string, string> = {
     adventure: "thrilling adventure",
@@ -37,7 +38,14 @@ router.post("/stories/generate", async (req, res) => {
     ar: "Arabic",
   };
 
-  const prompt = `Write a short ${typeMap[storyType] ?? storyType} children's story for a child named ${childName}, aged ${age} years.
+  const prompt = isLong
+    ? `Write a long ${typeMap[storyType] ?? storyType} children's story for a child named ${childName}, aged ${age} years.
+${characters ? `Include these characters: ${characters}.` : ""}
+Mood: ${moodMap[mood] ?? mood}.
+Language: ${langMap[language] ?? language}.
+Age-appropriate, rich, imaginative. Include vivid descriptions, dialogue, and a meaningful moral lesson.
+Format: emoji title on first line, then 6-8 detailed paragraphs. Around 500-600 words total.`
+    : `Write a short ${typeMap[storyType] ?? storyType} children's story for a child named ${childName}, aged ${age} years.
 ${characters ? `Include these characters: ${characters}.` : ""}
 Mood: ${moodMap[mood] ?? mood}.
 Language: ${langMap[language] ?? language}.
@@ -48,7 +56,7 @@ Format: emoji title on first line, then 3-4 short paragraphs. Under 220 words to
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1024,
+      max_tokens: isLong ? 2048 : 1024,
     });
 
     const story = completion.choices[0]?.message?.content ?? "";

@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { StoryInputLength } from './storyInputLength';
 
 export interface StoryInput {
   childName: string;
@@ -13,4 +14,5 @@ export interface StoryInput {
   mood: string;
   language: string;
   characters?: string;
+  length?: StoryInputLength;
 }

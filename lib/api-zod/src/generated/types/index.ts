@@ -9,4 +9,5 @@
 export * from './apiError';
 export * from './healthStatus';
 export * from './storyInput';
+export * from './storyInputLength';
 export * from './storyResult';

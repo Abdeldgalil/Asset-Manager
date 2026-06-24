@@ -14,6 +14,8 @@ const LANGUAGES: Record<string, any> = {
     types: { adventure:"Adventure", educational:"Educational", custom:"Personalized", fantasy:"Fantasy", bedtime:"Bedtime", funny:"Funny" },
     ages: { "2-4":"2–4 yrs", "5-7":"5–7 yrs", "8-10":"8–10 yrs", "11-13":"11–13 yrs" },
     moods: { happy:"😊 Happy", calm:"😌 Calm", exciting:"🤩 Exciting", mysterious:"🌙 Mysterious" },
+    lengths: { short:"📖 Short (2 min)", long:"📚 Long (5 min)" },
+    storyLength: "Story length",
     mood: "Story mood", placeholder: "e.g. Emma", close: "✕ Close",
     stats: "stories generated", shareText: "Share via",
     characters: "Add characters (optional)", charsPlaceholder: "e.g. a dragon, a robot...",
@@ -31,6 +33,8 @@ const LANGUAGES: Record<string, any> = {
     types: { adventure:"Aventure", educational:"Éducatif", custom:"Personnalisé", fantasy:"Fantaisie", bedtime:"Bonne nuit", funny:"Drôle" },
     ages: { "2-4":"2–4 ans", "5-7":"5–7 ans", "8-10":"8–10 ans", "11-13":"11–13 ans" },
     moods: { happy:"😊 Joyeux", calm:"😌 Calme", exciting:"🤩 Excitant", mysterious:"🌙 Mystérieux" },
+    lengths: { short:"📖 Courte (2 min)", long:"📚 Longue (5 min)" },
+    storyLength: "Longueur",
     mood: "Ambiance", placeholder: "ex. Emma", close: "✕ Fermer",
     stats: "histoires générées", shareText: "Partager via",
     characters: "Personnages (optionnel)", charsPlaceholder: "ex. un dragon, un robot...",
@@ -48,6 +52,8 @@ const LANGUAGES: Record<string, any> = {
     types: { adventure:"مغامرة", educational:"تعليمية", custom:"مخصصة", fantasy:"خيال", bedtime:"وقت النوم", funny:"مضحكة" },
     ages: { "2-4":"2–4 سنوات", "5-7":"5–7 سنوات", "8-10":"8–10 سنوات", "11-13":"11–13 سنة" },
     moods: { happy:"😊 سعيدة", calm:"😌 هادئة", exciting:"🤩 مثيرة", mysterious:"🌙 غامضة" },
+    lengths: { short:"📖 قصيرة (دقيقتان)", long:"📚 طويلة (5 دقائق)" },
+    storyLength: "طول القصة",
     mood: "مزاج القصة", placeholder: "مثال: سارة", close: "✕ إغلاق",
     stats: "قصة تم إنشاؤها", shareText: "مشاركة عبر",
     characters: "شخصيات إضافية (اختياري)", charsPlaceholder: "مثال: تنين، روبوت...",
@@ -131,6 +137,7 @@ export default function StoryBuddy() {
   const [mood, setMood] = useState("happy");
   const [storyLang, setStoryLang] = useState("en");
   const [chars, setChars] = useState("");
+  const [storyLength, setStoryLength] = useState<"short" | "long">("short");
   const [story, setStory] = useState<string | null>(null);
   const [showAd, setShowAd] = useState(false);
   const [saved, setSaved] = useState<any[]>([]);
@@ -160,6 +167,7 @@ export default function StoryBuddy() {
         mood: mood,
         language: storyLang,
         characters: chars || undefined,
+        length: storyLength,
       }
     }, {
       onSuccess: (data) => {
@@ -272,6 +280,20 @@ export default function StoryBuddy() {
                 <select className="inp" value={storyLang} onChange={e=>setStoryLang(e.target.value)}>
                   {Object.entries(LANGUAGES).map(([k,v])=><option key={k} value={k}>{v.flag} {v.name}</option>)}
                 </select>
+              </div>
+            </div>
+            <div style={{marginBottom:12}}>
+              <label style={{fontSize:12,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>{t.storyLength}</label>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                {(["short","long"] as const).map(l => (
+                  <button key={l} onClick={()=>setStoryLength(l)} type="button"
+                    style={{padding:"10px 8px",borderRadius:10,border:`2px solid ${storyLength===l?"#7c3aed":"rgba(255,255,255,0.12)"}`,
+                      background:storyLength===l?"rgba(124,58,237,0.2)":"rgba(255,255,255,0.04)",
+                      color:storyLength===l?"#c4b5fd":"rgba(255,255,255,0.55)",
+                      cursor:"pointer",fontSize:12,fontWeight:storyLength===l?700:400,transition:"all 0.2s"}}>
+                    {(t.lengths as any)[l]}
+                  </button>
+                ))}
               </div>
             </div>
             <div style={{marginBottom:16}}>

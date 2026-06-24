@@ -26,7 +26,8 @@ export const GenerateStoryBody = zod.object({
   "storyType": zod.string(),
   "mood": zod.string(),
   "language": zod.string(),
-  "characters": zod.string().optional()
+  "characters": zod.string().optional(),
+  "length": zod.enum(['short', 'long']).optional()
 })
 
 export const GenerateStoryResponse = zod.object({

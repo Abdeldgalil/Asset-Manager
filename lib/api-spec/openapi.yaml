@@ -80,6 +80,9 @@ components:
           type: string
         characters:
           type: string
+        length:
+          type: string
+          enum: [short, long]
       required:
         - childName
         - age
