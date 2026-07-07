@@ -376,7 +376,15 @@ export default function StoryBuddy() {
             }
           </div>
         )}
+
+        <div style={{textAlign:"center",marginTop:24,paddingTop:16,borderTop:"1px solid rgba(255,255,255,0.08)"}}>
+          <a href="https://sites.google.com/view/storybuddyprivacypolicy/accueil"
+            target="_blank" rel="noopener noreferrer"
+            style={{color:"rgba(255,255,255,0.35)",fontSize:11,textDecoration:"none"}}>
+            🔒 Privacy Policy
+          </a>
+        </div>
       </div>
     </div>
   );
-}
+         }
