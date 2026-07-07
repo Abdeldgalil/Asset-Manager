@@ -4,22 +4,7 @@ import { useGenerateStory } from "@workspace/api-client-react";
 const PUB_ID = "ca-pub-3178300656334660";
 const SLOTS = { banner: "1850730729", interstitial: "1467587348", rewarded: "1798759833" };
 
-function BannerAd({ slot = SLOTS.banner }: { slot?: string }) {
-  const ref = useRef<HTMLModElement>(null);
-  useEffect(() => {
-    try { ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({}); } catch {}
-  }, []);
-  return (
-    <div style={{minHeight:60,background:"rgba(255,255,255,0.03)",borderRadius:12,overflow:"hidden",margin:"8px 0",textAlign:"center"}}>
-      <ins ref={ref} className="adsbygoogle"
-        style={{display:"block"}}
-        data-ad-client={PUB_ID}
-        data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"/>
-    </div>
-  );
-}
+ 
 
 const LANGUAGES: Record<string, any> = {
   en: { name: "English", flag: "🇬🇧", dir: "ltr", ui: {
@@ -266,7 +251,6 @@ export default function StoryBuddy() {
             {totalCount>0&&<div style={{marginTop:6,fontSize:11,color:"rgba(255,255,255,0.3)"}}>📚 {totalCount} {t.stats}</div>}
           </div>
 
-          <BannerAd slot={SLOTS.banner} />
 
           <div className="glass-card">
             <div style={{marginBottom:12}}>
