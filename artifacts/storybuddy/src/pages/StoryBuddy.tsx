@@ -165,27 +165,49 @@ const [imgUrl, setImgUrl] = useState<string | null>(null);
   const handleGenerate = () => { if(!name.trim()) return; setShowAd(true); };
   const onAdDone = () => { setShowAd(false); generateStory(); };
 
-  const generateStory = () => {
-    setStory(null);
-    setIsSaved(false);
-    
-    generateStoryMutation.mutate({
-      data: {
-        childName: name,
-        age: age,
-        storyType: type,
-        mood: mood,
-        language: storyLang,
-        characters: chars || undefined,
-        length: storyLength,
-      }
-    }, {
-      onSuccess: (data) => {
-        setStory(data.story);
-        setTotalCount(p => p + 1);
-      }
-    });
-  };
+  const buildImagePrompt = () => {
+      const typeDesc: Record<string, string> = {
+        adventure: "an exciting adventure scene",
+        educational: "a curious educational scene",
+        custom: "a magical personalized scene",
+        fantasy: "a fantasy scene with magical creatures",
+        bedtime: "a cozy bedtime scene",
+        funny: "a funny playful scene",
+      };
+      const moodDesc: Record<string, string> = {
+        happy: "cheerful and bright",
+        calm: "calm and peaceful",
+        exciting: "exciting and dynamic",
+        mysterious: "mysterious and magical",
+      };
+      const charsPart = chars ? `featuring ${chars}` : "";
+      return `Children's book illustration, ${typeDesc[type] || "a magical scene"}, ${moodDesc[mood] || ""} ${charsPart}, colorful, whimsical, digital art, no text`;
+    };
+
+    const generateStory = () => {
+      setStory(null);
+      setIsSaved(false);
+      setImgUrl(null);
+
+      generateStoryMutation.mutate({
+        data: {
+          childName: name,
+          age: age,
+          storyType: type,
+          mood: mood,
+          language: storyLang,
+          characters: chars || undefined,
+          length: storyLength,
+        }
+      }, {
+        onSuccess: (data) => {
+          setStory(data.story);
+          setTotalCount(p => p + 1);
+          const prompt = buildImagePrompt();
+          setImgUrl(`https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true`);
+        }
+      });
+    };
 
   const handleSave = () => {
     if (!story || isSaved) return;
