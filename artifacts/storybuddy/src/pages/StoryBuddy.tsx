@@ -156,7 +156,7 @@ export default function StoryBuddy() {
   const [speaking, setSpeaking] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [showShare, setShowShare] = useState(false);
-
+const [imgUrl, setImgUrl] = useState<string | null>(null);
   const t = LANGUAGES[lang].ui;
   const dir = LANGUAGES[lang].dir as "ltr" | "rtl";
   
