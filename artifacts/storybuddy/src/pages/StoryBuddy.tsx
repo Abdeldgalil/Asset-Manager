@@ -204,7 +204,7 @@ const [imgUrl, setImgUrl] = useState<string | null>(null);
           setStory(data.story);
           setTotalCount(p => p + 1);
           const prompt = buildImagePrompt();
-          setImgUrl(`https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true`);
+          setImgUrl(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true&model=flux`);
         }
       });
     };
