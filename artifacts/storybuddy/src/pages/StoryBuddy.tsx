@@ -343,6 +343,11 @@ const [imgUrl, setImgUrl] = useState<string | null>(null);
 
           {story && (
             <div style={{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",borderRadius:20,padding:22,border:"1px solid rgba(167,139,250,0.3)",animation:"fadeIn 0.4s ease",marginBottom:14}}>
+             {imgUrl && (
+                <img src={imgUrl} alt="Story illustration"
+                  style={{width:"100%",borderRadius:14,marginBottom:16,display:"block"}}
+                  onError={(e)=>{(e.target as HTMLImageElement).style.display="none";}}/>
+              )}
               <div style={{whiteSpace:"pre-wrap",lineHeight:1.85,fontSize:14,color:"rgba(255,255,255,0.88)"}}>{story}</div>
               <div style={{borderTop:"1px solid rgba(255,255,255,0.08)",marginTop:16,paddingTop:14}}>
                 <StarRating t={t} onRate={r=>console.log("rated",r)}/>
