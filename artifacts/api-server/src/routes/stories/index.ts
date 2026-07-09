@@ -1,10 +1,28 @@
-import { Router } from "express";
+ import { Router } from "express";
 import Groq from "groq-sdk";
 import { GenerateStoryBody } from "@workspace/api-zod";
 
 const router = Router();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+const SETTINGS = [
+  "a floating island above the clouds", "an underwater coral kingdom", "a candy-colored forest",
+  "a tiny village inside a giant tree", "a desert of singing sand dunes", "a city built on the back of a giant turtle",
+  "a snowy mountain with a secret cave", "a garden where flowers can talk", "an old lighthouse by a glowing sea",
+  "a train that travels through the stars",
+];
+
+const TWISTS = [
+  "a map that redraws itself", "a shy creature who turns out to be the bravest of all",
+  "a riddle that must be solved before sunset", "a friendship with someone very unexpected",
+  "a lost object that holds a surprising secret", "a storm that reveals a hidden path",
+  "a mistake that leads to the best discovery", "a small act of kindness that changes everything",
+];
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 router.post("/stories/generate", async (req, res) => {
   const parsed = GenerateStoryBody.safeParse(req.body);
@@ -38,25 +56,39 @@ router.post("/stories/generate", async (req, res) => {
     ar: "Arabic",
   };
 
+  const setting = pick(SETTINGS);
+  const twist = pick(TWISTS);
+
+  const systemPrompt = `You are an award-winning children's book author known for vivid imagination, warm humor, and stories that never repeat the same structure twice. You avoid clichés like generic "once upon a time" openings unless it truly fits. Every story you write feels fresh and surprising, with a clear beginning, an engaging middle, and a satisfying end.`;
+
   const prompt = isLong
     ? `Write a long ${typeMap[storyType] ?? storyType} children's story for a child named ${childName}, aged ${age} years.
 ${characters ? `Include these characters: ${characters}.` : ""}
 Mood: ${moodMap[mood] ?? mood}.
 Language: ${langMap[language] ?? language}.
-Age-appropriate, rich, imaginative. Include vivid descriptions, dialogue, and a meaningful moral lesson.
-Format: emoji title on first line, then 6-8 detailed paragraphs. Around 500-600 words total.`
+Setting inspiration: ${setting}.
+Weave in this story element naturally: ${twist}.
+Age-appropriate, rich, imaginative, with vivid sensory descriptions and natural dialogue. Include a meaningful moral lesson that emerges from the plot rather than being stated bluntly.
+Format: an original emoji title on the first line (avoid generic titles), then 6-8 detailed paragraphs. Around 500-600 words total.`
     : `Write a short ${typeMap[storyType] ?? storyType} children's story for a child named ${childName}, aged ${age} years.
 ${characters ? `Include these characters: ${characters}.` : ""}
 Mood: ${moodMap[mood] ?? mood}.
 Language: ${langMap[language] ?? language}.
-Age-appropriate, warm, imaginative. Include a gentle moral lesson.
-Format: emoji title on first line, then 3-4 short paragraphs. Under 220 words total.`;
+Setting inspiration: ${setting}.
+Weave in this story element naturally: ${twist}.
+Age-appropriate, warm, imaginative. Include a gentle moral lesson that emerges from the plot rather than being stated bluntly.
+Format: an original emoji title on the first line (avoid generic titles), then 3-4 short paragraphs. Under 220 words total.`;
 
   try {
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt },
+      ],
       max_tokens: isLong ? 2048 : 1024,
+      temperature: 1.05,
+      top_p: 0.95,
     });
 
     const story = completion.choices[0]?.message?.content ?? "";
