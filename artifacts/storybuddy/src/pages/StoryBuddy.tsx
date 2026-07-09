@@ -1,4 +1,4 @@
-لهimport { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useGenerateStory } from "@workspace/api-client-react";
 
 const PUB_ID = "ca-pub-3178300656334660";
