@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+لهimport { useState, useRef, useEffect } from "react";
 import { useGenerateStory } from "@workspace/api-client-react";
 
 const PUB_ID = "ca-pub-3178300656334660";
@@ -404,11 +404,16 @@ const [imgUrl, setImgUrl] = useState<string | null>(null);
           </div>
         )}
 
-        <div style={{textAlign:"center",marginTop:24,paddingTop:16,borderTop:"1px solid rgba(255,255,255,0.08)"}}>
+        <div style={{textAlign:"center",marginTop:24,paddingTop:16,borderTop:"1px solid rgba(255,255,255,0.08)",display:"flex",gap:16,justifyContent:"center"}}>
           <a href="https://sites.google.com/view/storybuddyprivacypolicy/accueil"
             target="_blank" rel="noopener noreferrer"
             style={{color:"rgba(255,255,255,0.35)",fontSize:11,textDecoration:"none"}}>
             🔒 Privacy Policy
+          </a>
+          <a href="https://sites.google.com/view/storybuddyprivacypolicy/terms-of-service"
+            target="_blank" rel="noopener noreferrer"
+            style={{color:"rgba(255,255,255,0.35)",fontSize:11,textDecoration:"none"}}>
+            📜 Terms of Service
           </a>
         </div>
       </div>
