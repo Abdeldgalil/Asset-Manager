@@ -200,13 +200,22 @@ const [imgUrl, setImgUrl] = useState<string | null>(null);
           length: storyLength,
         }
       }, {
-        onSuccess: (data) => {
+       onSuccess: async (data) => {
           setStory(data.story);
           setTotalCount(p => p + 1);
           const prompt = buildImagePrompt();
-        const seed = Math.floor(Math.random() * 1000000);
-          setImgUrl(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true&model=flux&seed=${seed}`);
-        }
+          try {
+            const res = await fetch("/api/stories/image", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt }),
+            });
+            if (res.ok) {
+              const blob = await res.blob();
+              setImgUrl(URL.createObjectURL(blob));
+            }
+          } catch {}
+       }
       });
     };
 
