@@ -1,20 +1,14 @@
 import { Router } from "express";
-import { z } from "zod";
 
 const router = Router();
 
-const ImageRequestBody = z.object({
-  prompt: z.string().min(1),
-});
-
 router.post("/stories/image", async (req, res) => {
-  const parsed = ImageRequestBody.safeParse(req.body);
-  if (!parsed.success) {
+  const prompt = req.body?.prompt;
+  if (typeof prompt !== "string" || prompt.trim().length === 0) {
     res.status(400).json({ error: "Invalid request body" });
     return;
   }
 
-  const { prompt } = parsed.data;
   const seed = Math.floor(Math.random() * 1000000);
   const apiKey = process.env.POLLINATIONS_API_KEY;
 
